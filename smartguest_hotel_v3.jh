@@ -1,0 +1,651 @@
+/*
+ * Notes:
+ * - Host
+ * - HostedGuest
+ */
+//**********************ENTITIES*************************              //
+/**
+ * Sets of system configuration attributes.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity SystemConfig {
+	name String required
+    category String
+    description String
+    active Boolean
+	strAttributes String 
+	jsonAttributes String
+}
+/**
+ * Category of service offered by a Hospitality Venue
+ * 	ACCOMMODATION: lodges, hotels, resorts etc.
+ * DINING: restaurants, diners etc
+ * ACTIVITY: golf driving-ranges, art class, taichi, ziplining, white-water rafting, parachuting etc 
+ */
+enum HospitalityServiceType {
+	ACCOMMODATION, DINING_RESTAURANT, DINING_ROOM_SERVICE, DINING_PICKUP, DINING_HOME_DELIVERY, ACTIVITY
+}
+/**
+ * Service offered by a HospitalityVenue
+ * eg. Resort, Hotel, Game Farm, Lodge, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityService {
+	name String required
+	description String
+	hospitalityServiceType HospitalityServiceType
+}
+/**
+ * Category of hospitality venue.
+ * eg. Restaurant, Resort, Hotel, Game Farm, Lodge, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityType {
+	name String required
+    description String
+}
+/**
+ * An entity that owns or administers a group of hospitality venues.
+ * eg. Radisson, Southern Sun, Protea Hotels, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityGroup {
+	name String required
+    description String
+}
+/**
+ * Loyalty/Rewards programme offered by HospitalityGroup.
+ * Can apply accross a hospitality group
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RewardsProgramme {
+	name String required
+    description String
+}
+/**
+ * A specific hospitality/accommodation venue.
+ * eg. Radisson Blu Hotel Waterfront - Cape Town, Table Bay Hotel, Shamwari Game Farm, etc.
+ * 
+ * arrival/departure times - HH:MM 24 hour format eg. "10:30" or "14:30"
+ * TimeZone strings documentation: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityVenue {
+	name String required
+    description String
+    mainImage ImageBlob
+    rating Integer
+    arrivalTime String pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+    departureTime String pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+
+	// For interaction with payment gateway
+	paymentToken1 String
+	paymentToken2 String
+
+	isChildIfAgeBelow Integer
+	noChildrenUnder Integer
+
+    termsAndConditionsUrl String
+    privacyPolicyUrl String
+    exception String
+
+	latitude String // In format required by mapping service used
+	longitude String // In format required by mapping service used
+	customMapZoomFactor String // In format required by mapping service used
+
+	// Below originally one-to-one with Location
+	streetAddress String
+	postalCode String
+	city String
+	stateProvince String
+}
+/**
+ * A geographical mapping service. eg. Google maps, Open street maps, etc
+ * Will most likely be the same for all venues, but this entity allows some flexibility.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity GeoMapService {
+	name String required
+	description String
+	mapBaseUrl String 
+	defaultMapZoomFactor String
+    active Boolean
+    default Boolean
+	strAttributes String 
+	jsonAttributes String
+}
+/**
+ * An image used for carousel displays for the HospitalityVenue 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityVenueImage {
+	name String required
+    description String
+    image ImageBlob
+	imageUrl String
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * A facility that forms part of a HospitalityVenue  
+ * and may be associated with a room-type or a specific room.
+ * eg. Gym, Restaurant, Playpark, Game Drive, Beach, Kiddies Club,
+ * Massage/Manicure/Pedicure Spa, Bar, Lounge, Water Skiing, Ziplining, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityVenueFacility {
+	name String required
+    description String
+    image ImageBlob
+	imageUrl String
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * A floor/level within the hospitality venue.
+ * eg. Ground Floor, First Floor, Mezzanine Level
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Floor {
+	name String required
+	description String
+	floorPlan TextBlob
+	floorPlanUrl String
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * A category of rooms that share a set of features, pricing, etc. 
+ * Strictly speaking, this entity represents a type of accommodation unit 
+ * which might contain more than one bedroom/lounge-area/kitchen-area etc.
+ * 
+ * eg. Luxury Suite, Family Suite, Double Room Deluxe, Double Room Single, Single Room.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RoomType {
+	name String required
+    description String
+	maximumChildren Integer
+	maximumAdults Integer
+	maximumOccupants Integer
+    mainImage ImageBlob
+	estAvgPricePerNight Double // Display purposes - actual price set per day in RateCalendarEntry 
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * An image used for carousel displays for a RoomType
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RoomTypeImage {
+	name String required
+    description String
+    image ImageBlob
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * A specific room belonging to a room type and situated on a particular floor.
+ * Strictly speaking, this entity represents an accommodation unit 
+ * which might contain more than one bedroom/lounge-area/kitchen-area etc.
+ * 
+ * eg. Room 101, Room 102, Royal Suite - Top Floor, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Room {
+	name String required
+    description String
+    mainImage ImageBlob
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * An image used for carousel displays for a Room
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RoomImage {
+	name String required
+    description String
+    image ImageBlob
+	imageUrl String
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * A feature that applies to a room 
+ * and may be associated with a room-type or a specific room.
+ * eg. Mini Bar, View, Desk, Safe, Balcony, Bath, Lounge Area, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RoomTypeFeature {
+	name String required
+    description String
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * A type of bed  
+ * eg. Single Bed, Twin, Double, King, Queen etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity BedType {
+	name String required
+    description String
+	sizeInInches String
+	sizeInCentimeters String
+	maximumSleepers Integer
+}
+/**
+ * The number of beds of a specified type in a RoomType  
+ * eg. Single Bed, Twin, Double, King, Queen etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RoomTypeBedCount {
+	displayCode String
+	bedCount Integer
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * Rate per night for each day of accommodation for a room type.
+ * 
+ * ZonedDateTime documented here: https://www.codebyamir.com/blog/add-a-timezone-to-localdatetime-with-zoneddatetime-in-java-8
+ * TimeZone strings: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RateCalendarEntry {
+	displayCode String
+	accommodationDate ZonedDateTime
+	pricePerNight Double
+	special Boolean
+	specialDescription String
+	tennantId Long // Hospitality Venue ID
+}
+entity RoomTypeSpecial {
+	name String required
+	description String required
+	active Boolean
+	forAccommodationFrom ZonedDateTime
+	forAccommodationTo ZonedDateTime
+	pricePerNight Double 
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * Availability status.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+enum AvailabilityStatus {
+	AVAILABLE, PENDING_CONFIRMATION, RESERVED, CLOSED_OUT
+}
+/**
+ * Calendar of room availability. 
+ * 
+ * ZonedDateTime documented here: https://www.codebyamir.com/blog/add-a-timezone-to-localdatetime-with-zoneddatetime-in-java-8
+ * TimeZone strings: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity AvailabilityCalendarEntry {
+	displayCode String
+	accommodationDate ZonedDateTime
+	availabilityStatus AvailabilityStatus
+	tennantId Long // Hospitality Venue ID
+}
+/**
+ * **Collapsed 1-to-1 relationships into base tables 
+ * 
+ * The location of a hospitality venue / guest etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+// entity Location {
+// 	description String
+// 	streetAddress String
+// 	postalCode String
+// 	city String
+// 	stateProvince String
+// }
+/**
+ * The country of a hospitality venue / guest etc.
+ * Country codes are ISO 3166, Currency codes are 4217
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Country {
+	name String required
+	countryCodeAlpha2 String
+	countryCodeAlpha3 String
+	countryCodeNumeric String
+	currencyName String
+	currencyCodeAlpha String
+	currencySymbol String
+	exchangeRateUSD Double
+	exchangeRateTimePoint ZonedDateTime
+}
+/**
+ * TimeZone IDs.
+ * 
+ * ZonedDateTime documented here: https://www.codebyamir.com/blog/add-a-timezone-to-localdatetime-with-zoneddatetime-in-java-8
+ * TimeZone strings: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity TimeZone {
+	name String required
+	timeZoneId String required /** either an abbreviation such as "PST" OR a full name such as "America/Los_Angeles" OR a custom ID such as "GMT-8:00". Note that the support of abbreviations is for JDK 1.1.x compatibility only and full names should be used. Used as follows: ZonedDateTime zonedDateTime = instant.atZone(ZoneId.of("Asia/Kolkata"))**/
+}
+/*****************************************************************/
+/*****************************************************************/
+/*************** Entities linked to a specific user **************/
+/*****************************************************************/
+/*****************************************************************/
+/**
+ * Details of a guest.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Guest {
+	displayCode String
+	// ** Removed all fields already in User entity - has 1-to-1 relationship to User
+	// title String
+    // firstName String
+    // surname String
+    mobileNo String
+    // emailAddress String
+    preferences String
+	// Below originally one-to-one with Location
+	streetAddress String
+	postalCode String
+	city String
+	stateProvince String
+
+	// For interaction with payment gateways or cc vault
+	paymentToken1 String
+	paymentToken2 String
+// userId Long
+}
+/**
+ * Details of a booking - will be associated with one Guest(paying Guest) and a set of rooms (reserved rooms).
+ * 
+ * ZonedDateTime documented here: https://www.codebyamir.com/blog/add-a-timezone-to-localdatetime-with-zoneddatetime-in-java-8
+ * TimeZone strings: https://garygregory.wordpress.com/2013/06/18/what-are-the-java-timezone-ids/
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity AccommodationReservation {
+	displayCode String
+	numberOfAdults Integer
+    numberOfChildren Integer
+    voucherId String
+    earliestFirstNight ZonedDateTime
+    latestLastNight ZonedDateTime
+    totalPrice Double
+	instructionNotes String
+	tennantId Long // Hospitality Venue ID
+	userId Long
+}
+/**
+ * 
+ * 
+ */
+entity RoomReservation {
+	displayCode String
+	numberOfAdults Integer
+    numberOfChildren Integer
+    firstNight ZonedDateTime
+    lastNight ZonedDateTime
+    price Double
+	instructionNotes String
+	tennantId Long // Hospitality Venue ID
+	userId Long
+}
+/**
+ * Age category of occupants.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+enum AgeCategory {
+	SENIOR, ADULT, YOUNG_ADULT, CHILD, YOUNG_CHILD, TODDLER, INFANT
+}
+/**
+ * An occupant of a room - will be associated with one Guest(occupant) and one room (reserved room).
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity ReservationRoomOccupant {
+	name String required
+	ageCategory AgeCategory
+    mobileNo String
+    emailAddress String
+	accessKeyCode String
+	tennantId Long // Hospitality Venue ID
+	userId Long
+}
+/**
+ * Loyalty/Rewards programme membership for a guest.
+ * Can apply accross a hospitality group
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RewardsProgrammeMembership {
+	displayCode String
+	membershipCode String
+	points Integer
+	userId Long
+}
+/**
+ * ** Removed for PCI compliance - added paymentTokens to Guest
+ * 	
+ * Guest Payment Info.
+ * Can apply accross a hospitality group
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+// entity PaymentInformation {
+// 	   cardNumber String
+//     expirationDate LocalDate
+//     cvvCode String
+//     nameOnCard String
+// }
+/**
+ * Status of an order.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+enum OrderStatus {
+	ORDERING
+	SUBMITTED
+	PROCESSING
+	COMPLETED
+}
+/**
+ * An order of product(s) or service(s) placed at a specific time.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Order {
+	displayCode String
+	description String
+	orderDate ZonedDateTime
+	finalPrice Double
+	numberOfAdults Integer
+    numberOfChildren Integer
+	startDateTime ZonedDateTime
+	endDateTime ZonedDateTime
+	instructionNotes String
+	orderStatus OrderStatus
+	tennantId Long // Hospitality Venue ID
+	userId Long
+}
+/**
+ * Type of order item.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+enum OrderItemType {
+	ROOM_TYPE, ROOM, TABLE_TYPE, TABLE, MENU_ITEM
+}
+/**
+ * A line-item of an order. Refers to a specific product/service().
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity OrderItem {
+	name String required
+	description String
+	orderItemType OrderItemType required
+	itemId Long required // depending on orderItemType - either a roomtype room or menu item 
+	parentItemId Long // the restaurant order system feels like it might have a hierarchy of order items: table > meal > extra and choice etc. 
+	startDateTime ZonedDateTime
+	endDateTime ZonedDateTime
+	quantity Integer
+	unitPrice Double
+	numberOfAdults Integer
+    numberOfChildren Integer
+	instructionNotes String
+	tennantId Long // Hospitality Venue ID
+	userId Long
+}
+/**
+ * Payment processor used by a HospitalityVenue.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity PaymentGateway {
+	name String required
+	description String
+	active Boolean
+	strAttributes String 
+	jsonAttributes String
+}
+/**
+ * Status of a payment.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+enum PaymentStatus {
+	ATTEMPTED
+	SUCCESS
+	FAILURE_PAYEE_ERROR
+	FAILURE_GATEWAY_ERROR
+	FAILURE_SYSTEM_ERROR
+	CANCELLED
+}
+/**
+ * A payment received against an order. 
+ * Making provision for more than one Payment per Order
+ * - eg. by different users or tranches(deposit/final-payment) 
+ * - see many-to-one relationships 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Payment {
+	displayCode String
+	description String
+	paymentRef String
+	additionalDetails String
+	amount Double
+	paymentStatus PaymentStatus
+}
+//**********************RELATIONSHIPS*************************   //
+/**
+ * one-to-one relationships.
+ * this example is unidirectional.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+relationship OneToOne {
+	// ** Removed and collapsed most 1-to-1 relationships into single table
+	// Important - User is a special system entity 
+	// and cannot be the owner (left-hand-side) of a relationship
+	Guest{user(login)} to User
+}
+/**
+ * bidirectional one-to-many relationships.
+ * The MANY side knows the ONE, and the ONE side knows the MANY
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+relationship OneToMany {
+	HospitalityGroup{hospitalityVenue(name)} to HospitalityVenue{hospitalityGroup(name)}
+
+	HospitalityType{hospitalityVenue(name)} to HospitalityVenue{hospitalityType(name)}
+	HospitalityVenue{hospitalityVenueImage(name)} to HospitalityVenueImage{hospitalityVenue(name)}
+	HospitalityVenue{hospitalityVenueFacility(name)} to HospitalityVenueFacility{hospitalityVenue(name)}
+	HospitalityVenue{floor(name)} to Floor{hospitalityVenue(name)}
+	HospitalityVenue{roomType(name)} to RoomType{hospitalityVenue(name)}
+	RoomType{roomTypeImage(name)} to RoomTypeImage{roomType(name)}
+
+	RoomType{room(name)} to Room{roomType(name)}
+	Room{roomImage(name)} to RoomImage{room(name)}
+
+	HospitalityGroup{rewardsProgramme(name)} to RewardsProgramme{hospitalityGroup(name)}
+	RewardsProgramme{rewardsProgrammeMembership(displayCode)} to RewardsProgrammeMembership{rewardsProgramme(name)}
+	Guest{rewardsProgrammeMembership(displayCode)} to RewardsProgrammeMembership{guest(displayCode)}
+
+	RoomType{rateCalendarEntry(displayCode)} to RateCalendarEntry{roomType(name)}
+	Room{availabilityCalendarEntry(displayCode)} to AvailabilityCalendarEntry{room(name)}
+
+	RoomType{roomTypeSpecial(name)} to RoomTypeSpecial{roomType(name)}
+
+	Floor{hospitalityVenueFacility(name)} to HospitalityVenueFacility{floor(name)}
+	Floor{room(name)} to Room{floor(name)}
+
+	BedType{roomTypeBedCount(displayCode)} to RoomTypeBedCount{bedType(name)}
+
+	HospitalityVenue{reservation(displayCode)} to AccommodationReservation{hospitalityVenue(name)}
+	Guest{reservation(displayCode)} to AccommodationReservation{principalGuest(displayCode)}
+	AccommodationReservation{roomReservation(displayCode)} to RoomReservation{reservation(displayCode)}
+
+	Room{roomReservation(displayCode)} to RoomReservation{room(name)}
+	RoomReservation{reservationRoomOccupant(name)} to ReservationRoomOccupant{roomReservation(displayCode)}
+	Guest{reservationRoomOccupant(name)} to ReservationRoomOccupant{occupant(displayCode)}
+
+	Order{orderItem(name)} to OrderItem{order(displayCode)}
+	Order{payment(displayCode)} to Payment{order(displayCode)}
+	PaymentGateway{payment(displayCode)} to Payment{paymentGateway(name)}
+	Guest{payment(displayCode)} to Payment{payee(displayCode)}
+}
+/**
+ * jdl many-to-one relationships are always unidirectional.
+ * The direction of access is the opposite to unidirectional one-to-many.
+ * The MANY side knows the ONE, but the reverse is not the case.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+relationship ManyToOne {
+	// Device{deviceType(name)} to DeviceType,
+	Guest{country(name)} to Country
+	HospitalityVenue{country(name)} to Country
+	HospitalityVenue{paymentGateway(name)} to PaymentGateway
+	HospitalityVenue{timeZone(name)} to TimeZone
+	HospitalityVenue{timeZone(name)} to GeoMapService
+}
+/**
+ * many-to-many relationships.
+ * In this example: Car{driver} to Driver{car}
+ * the generated Angular/React client UI you will have a multi-select dropdown in Car to select multiple Driver since Car is the owning side (left-hand side).
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+relationship ManyToMany {
+	// DeviceType{standardAttributeSet(name)} to StandardAttributeSet{deviceType(name)}
+	RoomType{roomTypeFeature(name)} to RoomTypeFeature{roomType(name)}
+	AccommodationReservation{room(name)} to Room{reservation(displayCode)}
+	RoomType{roomTypeBedCount(displayCode)} to RoomTypeBedCount{roomType(name)}
+	HospitalityVenue{hospitalityService(name)} to HospitalityService{hospitalityVenue(name)}
+}
+//**********************OTHER FEATURES*************************              //
+dto * with mapstruct
+filter *
+service * with serviceClass
+// paginate all with pagination
