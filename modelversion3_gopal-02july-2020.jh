@@ -1,0 +1,475 @@
+
+/* entities */
+/**
+ * Indicates the availability of an inventory item, 
+ * e.g., a room or a table, at any given date and time.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity AvailabilityCalendarEntry {
+  date ZonedDateTime	
+  status Boolean	
+  time ZonedDateTime
+}
+/**
+ * A service provider will offer their services off a catalogue either in respect of item types or items themselves. 
+ * In the case of a restaurant for example, a menu would serve as the catalogue and be made up of a set of menu items which are item types 
+ * (e.g., Beef giro in pita, halloumi in pita, spanakopita, pasticcio, etc.). 
+ * 
+ * For a hotel, a set of floor plans would serve as the catalogue from which a consumer can choose a room (an item). 
+ * 
+ * For a spa, a menu wold serve as the catalogue with choices in respect of massages, hand and foot services, etc. (an item) . 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Catalogue {
+  description String	
+  image ImageBlob	
+  name String	
+  orderSequence Integer	
+  termsAndConditions String
+}
+/**
+ * Some catalogue item types come with price-value-neutral descriptive options. 
+ * 
+ * In the restaurant metaphor these may be - e.g., mild, medium, or hot; or rare, medium, well; or vegetables, chips, mash, etc. 
+ * 
+ * In the hotel metaphor this may include wake-up service, newspaper delivery, towel changing service, etc. 
+ * 
+ * The group may allow for the choice of one and only one option; or for one or more options represented by the count attribute. 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity CatalogueItemOptionGroup {
+  description String	
+  name String	
+  selectIonCount Integer
+}
+/**
+ * These are the types of items that are represented in a catalogue. 
+ * In a food menu catalogue for example, these are the actual food items on offer. 
+ * 
+ * In a hotel, these are the type of rooms.
+ * 
+ * The entity makes provision for an order sequence for presentation purposes, as well as for terms and conditions 
+ * and a narrative and what is included or excluded should that be required. 
+ * An image attribute is also provided for, should that be required. 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity CatalogueItemType {
+  description String	
+  excludedNarrative String	
+  includedNarrative String	
+  image ImageBlob	
+  name String	
+  orderSequence Integer	
+  termsAndConditions String
+}
+/**
+ * A catalogue entries in the form of item types may have features attached. 
+ * 
+ * In the hotel metaphor it would be the features attached to the type of room e.g., kitchen, couch, tv, bath, shower, etc. 
+ * 
+ * In the restaurant metaphor and if so required it would be feature attached to the type of table 
+ * (e.g., with baby chair, central griller, etc.). 
+ * Sometimes features have values attached to them, 
+ * e.g., in the case of a room a feature would include the maximum number of occupants, or children; 
+ * or number of beds of a particular type, etc. 
+ * This entity therefore needs to make provision for value based descriptors for the feature. 
+ * It also makes provision for an image where that may be required.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity CatalogueItemTypeFeature {
+  description String	
+  image ImageBlob	
+  name String	
+  value Float
+}
+/**
+ * This entity represents the options for a given option group.
+ * e.g. Mild, Medium, Hot or Rare, Medium-Rare, Medium, Well-Done
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity CatalogueOption {
+  description String	
+  name String
+}
+/**
+ * This is a member of the set of items (actual inventory) attached to a catalogue under a specific catalogue type. 
+ * These entities will be created by administrators upfront in the case of purchases that happen against a specific item 
+ * (e.g., room or table). 
+ * In the case of where purchase choice happens off a catalogue of item types (e.g., food menu item) 
+ * this entity will be created by the system at point of purchase. 
+ * In the case of the former an order sequence attribute is provided for presentation purposes where required.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity CatalogueOrderItem {
+  description String	
+  name String	
+  orderSequence Integer
+}
+/**
+ * Indicates the type of catalogue and relates to a set of enums so that we know how to handle them. e.g., Floorplan, Food Menu, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity CatalogueType {
+  description String	
+  name String
+}
+/**
+ * An image in cases where a set of images have to be displayed. 
+ * For example a room may come with a gallery of images to show various aspects of the room, like the view. 
+ * In all other cases images have been catered for as attribute inclusion against the entity itself. 
+ * The entity makes provision for indicating the primary image amongst a set, should the need require the presentation of one amongst that set.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity GalleryImage {
+  description String	
+  image ImageBlob	
+  primaryImage ImageBlob	
+  name String
+}
+/**
+ * A type of Gallery Image (icon, photo, etc) - enum??
+ * Gopal: TODO - Look at this more closely and see at which level it applies.
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity GalleryImageType {
+  name String	
+  description String
+}
+/**
+ * This keeps track of the person (guest) associated with the order entries they chose. 
+ * A guest can be a name or a reference to another user who is registered with the app. 
+ * The entity also tracks whether the guest is a host or payee and if the latter, 
+ * the amount contributed towards the payment if so required.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Guest {
+  host Boolean	
+  payee Boolean	
+  user Boolean	
+  name String	
+  paymentAmount Float	
+  paymentCurrency String
+}
+/**
+ * Details of the group under which a provider is constituted. 
+ * The reason for grouping providers are numerous and providers may belong to more than one group. 
+ * Examples for the need for groups include: A group of providers located in the same place 
+ * (e.g., An hotel that has other facilities like a spa, gym, or restaurant contained within it); 
+ * a group of hotels that fall under the same corporate grouping; etc. 
+ * Provision is made to indicate which the primary provider is within any given group.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityGroup {
+  description String	
+  name String
+}
+/**
+ * A means to describe the nature of the grouping of providers, e.g., Corporate group, rewards group, location, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityGroupContext {
+  description String	
+  name String
+}
+/**
+ * A hospitality service provider can be a restaurant, hotel, spa, golfing venue, etc. 
+ * It provides for a set of attributes that are used for information purposes. 
+ * It also provides for loyalty programme set up attributes for their loyalty programme.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityServiceProvider {
+  city String	
+  country String	
+  customMapZoomFactor Integer	
+  arrivalTime String pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)
+  departureTime String pattern(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)	
+  description String	
+  icon ImageBlob	
+  isChildIfAgeBelow String	
+  landingPageImage ImageBlob	
+  latitude Float	
+  longitude Float	
+  name String	
+  noChildrenUnder Integer	
+  postalCode String	
+  privacyPolicy String	
+  purchaseLoyaltyRewardRatio String	
+  referralLoyaltyRewardAmount Float	
+  stateProvince String	
+  streetAddress String	
+  termsAndConditions String	
+  timeZone String	
+  welcomePageImage ImageBlob
+}
+/**
+ * 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Location {
+  streetAddress String
+	postalCode String
+	city String
+	stateProvince String
+}
+/**
+ * 
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Country {
+  countryName String
+}
+/**
+ * Notifications the service provider needs to send to their loyalty users. 
+ * The latter being defined as one who has the provider currently rated at a 3 or more. 
+ * Besides the text for the notification the entity also has a date/time attribute that needs to be set for when the broadcast should happen.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityServiceProviderNotification {
+  broadcastDateTime ZonedDateTime	
+  description String	
+  name String
+}
+/**
+ * A means to mark a hospitality venue as a hotel, motel, game lodge, restaurant, Spa, Gym, Golf facility, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity HospitalityType {
+  descripiton String	
+  name String
+}
+/**
+ * This entity provides a means for the grouping together of features that are of the same type for presentation purposes. 
+ * e.g., Bed related features, Occupancy related features, bathroom features, etc.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity ItemTypeFeatureCategory {
+  description String	
+    name String
+}
+/**
+ * A means to track against what loyalty protocol the point was accumulated. Two options exist "payment" or "referral" at this stage.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity LoyaltyAccrualMethod {
+  description String	
+  name String
+}
+/**
+ * A loyalty point is accrued against a user every time they participate in a payment or a converted referral 
+ * (i.e., one in which the person they referred the application to also becomes a user). 
+ * Loyalty points can only be redeemed in respect of providers with a personal rating of 3 or more.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity LoyaltyPoint {
+  amount Float	
+  expiryDate ZonedDateTime	
+  value Float	
+  instantionDateTime ZonedDateTime
+}
+/**
+ * This a grouping of order entries associated with the user who initiated the order
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Order {
+  balance Float	
+  bookingDate ZonedDateTime	
+  bookingTime ZonedDateTime	
+  deliveryAddress String
+}
+/**
+ * This is the order entry associated with an ordering event pre-purchase. 
+ * It makes provision for a number of attributes that have more or less relevance depending on the type of provider. 
+ * It has attributes to record the following where relevant: the quantity of items being purchased, any special instructions, 
+ * number of children or adults, first and last nights for room reservations. 
+ * It also records the value of the order, when the order event happened and when it was charged.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity OrderEntry {
+  value String	
+  instructions String	
+  numberOfAdults Integer	
+  numberOfChildren Integer	
+  quantity Integer	
+  roomReservationFirstNight ZonedDateTime	
+  roomReservationLastNight ZonedDateTime	
+  whenCharged ZonedDateTime	
+  whenOrdered ZonedDateTime
+}
+/**
+ * This entity qualifies the nature of the order. In the restaurant metaphor an order can be sit down, collection or delivery.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity OrderType {
+  description String	
+  name String
+}
+/**
+ * Payments made by a user in respect of an order
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity Payment {
+  additionalDetails String	
+  amount Float	
+  currency String	
+  dateTime ZonedDateTime	
+  descrition String	
+  dislayCode String	
+  reference String	
+  status Boolean
+}
+/**
+ * An abstract class that connects the system to a 3rd party payment gaetway.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity PaymentGateway {
+  name String
+}
+/**
+ * A means to apply a time bound rate to a category of catalogue items. 
+ * Best example as it applies to hotels is that one can apply a rate to in-season / off season occupancy based on room type. 
+ * Within the restaurant metaphor an example is the allocation of a price to a plate (fixed) menu category rather than 
+ * individual menu items as is traditionally the case with an ala carte menu.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity RateCalendarEntry {
+  currency String	
+  description String	
+  fromDate ZonedDateTime	
+  name String	
+  specialRate Float	
+  toDate ZonedDateTime	
+  value Float
+}
+/**
+ * JHipster generateds a user which represents a registered user of the system
+ * This entity will contain additional details not generated by JHipster, and will have a one-to-one relationship with the generated user.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity UserProfile {
+  name String	
+  notificationPreference Boolean
+}
+/**
+ * Keeps track of the user's rating and which service providers are the user's favourite. 
+ * It also serves as an anchor point for loyalty points accruing to the user. 
+ * Accrued loyalty points are only in respect of provides that have a personal user rating of 3 or more.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity UserFavourite {
+  dateTimeEntry ZonedDateTime	
+  rating Float	
+  review String	
+  reviewTitle String
+}
+/**
+ * Indicates whether a notification has been read or not.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity UserNotificationStatus {
+  status Boolean
+}
+/**
+ * A referral sent to another potential user by an existing user. 
+ * Once registered the referral becomes a user themselves. A referral code is used to keep track of referrals.
+ * 
+ * @author Digiterra Software Factory <digiterragroup.com>
+ */
+entity UserReferral {
+  code String	
+  contactDetails String	
+  isUser Boolean	
+  name String
+}
+//**********************RELATIONSHIPS************************* //
+relationship OneToOne {
+  // additions by Veena
+  HospitalityServiceProvider{location} to Location
+    //doubt
+    UserFavourite{loyaltyPoint} to LoyaltyPoint
+}
+relationship OneToMany {
+//additions by Veena
+  Country{location} to Location
+//new
+Catalogue{catalogue} to Catalogue
+Catalogue{catalogueItemType} to CatalogueItemType
+HospitalityServiceProvider{catalogue} to Catalogue
+HospitalityType{hospitalityServiceProvider} to HospitalityServiceProvider
+ItemTypeFeatureCategory{catalogueItemTypeFeature} to CatalogueItemTypeFeature
+CatalogueItemOptionGroup{catalogueOption} to CatalogueOption
+CatalogueOption{orderEntry} to OrderEntry
+CatalogueItemType{catalogueOrderItem} to CatalogueOrderItem
+Catalogue{catalogueOrderItem} to CatalogueOrderItem
+CatalogueOrderItem{orderEntry} to OrderEntry
+Order{orderEntry} to OrderEntry
+Guest{orderEntry} to OrderEntry
+CatalogueOrderItem{availabilityCalendarEntry} to AvailabilityCalendarEntry
+ User{guest} to Guest
+  User{userFavourite} to UserFavourite
+  HospitalityServiceProvider{userFavourite} to UserFavourite
+  
+  User{loyaltyPoint} to LoyaltyPoint // needed?
+  LoyaltyAccrualMethod{LoyaltyPoint} to LoyaltyPoint//needed?
+  HospitalityServiceProvider{hospitalityServiceProviderNotification} to HospitalityServiceProviderNotification 
+  HospitalityServiceProviderNotification{userNotificationStatus} to UserNotificationStatus
+  User{userNotificationStatus} to UserNotificationStatus
+  User{userReferral} to UserReferral
+  User{payment} to Payment
+  User{order} to Order
+  HospitalityGroupContext{hospitalityGroup} to HospitalityGroup
+  PaymentGateway{payment} to Payment
+  CatalogueOrderItem{galleryImage} to GalleryImage
+//new
+}
+relationship ManyToMany {
+//additions
+  HospitalityServiceProvider{country} to Country
+//new
+
+ 	CatalogueItemTypeFeature{catalogueItemType} to CatalogueItemType
+	CatalogueItemType{catalogueItemOptionGroup} to CatalogueItemOptionGroup
+     Order{payment} to Payment
+      HospitalityGroup{hospitalityServiceProvider} to HospitalityServiceProvider
+      HospitalityServiceProvider{paymentGateway} to PaymentGateway //Gopal
+      HospitalityServiceProvider{orderType} to OrderType
+// new
+}
+relationship ManyToOne {
+//additions
+  GalleryImage{GalleryImageType} to GalleryImageType
+//new
+Order{OrderType} to OrderType
+
+	RateCalendarEntry{catalogueCategory} to CatalogueItemType
+    UserReferral{hospitalityServiceProvider} to HospitalityServiceProvider
+// new
+}
